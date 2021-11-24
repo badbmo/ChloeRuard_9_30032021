@@ -99,7 +99,6 @@ describe("Given I am connected as an employee", () => {
 	});
 });
 
-// Tests for 100% on branches in test coverage (else path)
 describe("Given I am connected as an employee", () => {
 	describe("When I am on Bills Page and there is no bills", () => {
     test("Then there is no eye icon on the page", () => {
@@ -109,40 +108,12 @@ describe("Given I am connected as an employee", () => {
       }))
       const html = BillsUI({ data: []});
       document.body.innerHTML = html;
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-      const firestore = null
-      const allBills = new Bills({
-        document, onNavigate, firestore, localStorage: window.localStorage
-      })
       const eye = document.querySelectorAll(`div[data-testid="icon-eye"]`)[0]
       expect(eye).toBeFalsy()
     });
   });
 });
 
-describe("Given I am connected as an employee", () => {
-	describe("When I am on Bills Page and there is no bills", () => {
-    test("Then there is a New Bill button on the page", () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee'
-      }))
-      const html = BillsUI({ data: []});
-      document.body.innerHTML = html;
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-      const firestore = null
-      const allBills = new Bills({
-        document, onNavigate, firestore, localStorage: window.localStorage
-      })
-      const newBillButton = screen.queryByTestId('btn-new-bill')
-      expect(newBillButton).toBeTruthy()
-    });
-  });
-});
 
 describe("When I am on Bills page but it is loading", () => {
 	test("Then, Loading page should be rendered", () => {
