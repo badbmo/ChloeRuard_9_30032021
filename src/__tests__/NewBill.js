@@ -26,11 +26,18 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         }
-        const firestore = null
+        const firestoreMock = {
+          ref: jest.fn().mockReturnThis(),
+          put: jest.fn().mockImplementation(() => Promise.resolve({ ref: {getDownloadURL: () => Promise.resolve()} })),
+        };
+        const firestore = {
+          storage : firestoreMock
+        }
         const newBill = new NewBill({
           document, onNavigate, firestore, localStorage: window.localStorage
         })
 
+        const errorMessage = document.querySelector(".error__image")
         const fileInput = screen.getByTestId("file")
         const newFile = new File([`test`], 'test.txt', {type: "texte/txt"})
         const handleChangeFile = jest.fn(newBill.handleChangeFile)
@@ -38,9 +45,8 @@ describe("Given I am connected as an employee", () => {
         fireEvent.change(fileInput, {target: {files:[newFile],}})
         expect(handleChangeFile).toHaveBeenCalled()
         expect(fileInput.value).toBe("")
-
-        const errorMessage = document.querySelector(".error__image")
         expect(errorMessage.style.display).toBe("block")
+        expect(firestoreMock.put).not.toHaveBeenCalled()
       })
     })
 
@@ -55,35 +61,18 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         }
-
-        // const firestoreMock = {
-        //   ref: jest.fn().mockReturnThis(),
-        //   doc: jest.fn().mockReturnThis(),
-        //   put: jest.fn().mockImplementation(() => Promise.resolve({ ref: {getDownloadURL: () => Promise.resolve()} })),
-        // };
-  
-        // const firestore = {
-        //   storage : firestoreMock
-        // }
-
-        // const firestoreMock = {
-        //   storage: {
-        //     ref:() =>{return firestore.storage},
-        //     put: async()=>{
-        //       return {
-        //         ref: {getDownload:() =>{"https://www.test_url.com"}},
-        //       }
-        //     },
-        //   },
-        // };
-        // const firestore = firestoreMock
-
-        const firestore =null
-
+        const firestoreMock = {
+          ref: jest.fn().mockReturnThis(),
+          put: jest.fn().mockImplementation(() => Promise.resolve({ ref: {getDownloadURL: () => Promise.resolve()} })),
+        };
+        const firestore = {
+          storage : firestoreMock
+        }
         const newBill = new NewBill({
           document, onNavigate, firestore, localStorage: window.localStorage
         })
 
+        const errorMessage = screen.getByTestId("error")
         const fileInput = screen.getByTestId("file")
         const newFile = new File(["(⌐□_□)"], "test.jpeg", {type: "image/jpeg"})
         const handleChangeFile = jest.fn(newBill.handleChangeFile)
@@ -91,9 +80,8 @@ describe("Given I am connected as an employee", () => {
         fireEvent.change(fileInput, {target: {files: [newFile],},})
         expect(handleChangeFile).toHaveBeenCalled()
         expect(fileInput.files[0]).toStrictEqual(newFile)
-         const errorMessage = document.querySelector(".error__image")
-         //const errorMessage = screen.getByTestId("error")
-         //expect(errorMessage.style.display).toBe("none")
+        expect(firestoreMock.put).toHaveBeenCalled()
+        expect(errorMessage.style.display).toBe("none")
       })
     })
 
